@@ -31,6 +31,18 @@
       "gdbPath": "/usr/bin/gdb-multiarch",
 //    "showDevDebugOutput": "raw",
     },
+    {
+      "name": "Debug foo on nRF52-dk",
+      "cwd": "${workspaceFolder}/projects/adaptabuild-example",
+      "executable": "build/foo/nRF52832/foo/foo",
+      "request": "launch",
+      "type": "cortex-debug",
+      "runToEntryPoint": "main",
+      "servertype": "external",
+      "gdbTarget": "host.gdb.gateway:2331",
+      "gdbPath": "/usr/bin/gdb-multiarch",
+//    "showDevDebugOutput": "raw",
+    },
   ],
 }
 
