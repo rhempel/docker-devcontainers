@@ -32,6 +32,42 @@
 //    "showDevDebugOutput": "raw",
     },
     {
+      // Uses https://github.com/majbthrd/pico-debug/releases !!! :-)
+      // https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#what-is-on-your-pico
+      // https://github.com/carlosftm/RPi-Pico-Baremetal
+      // https://github.com/trebisky/rp2040/blob/master/boot2/README.md
+      // https://github.com/dwelch67/raspberrypi-pico/blob/main/README.txt
+      // https://gitlab.com/khockuba/cmsis-pi-pico
+      // https://github.com/cinnamondev/cmsis-rp2040
+      "numberOfProcessors": 2,
+      "targetProcessor": 1,
+      "name": "Debug foo on pico2040",
+      "cwd": "${workspaceFolder}/projects/adaptabuild-example",
+      "executable": "build/foo/pico2040/foo/foo",
+      "request": "launch",
+      "type": "cortex-debug",
+      "runToEntryPoint": "main",
+      "servertype": "external",
+      "gdbTarget": "host.gdb.gateway:3333",
+      "gdbPath": "/usr/bin/gdb-multiarch",
+//      "showDevDebugOutput": "raw",
+      "svdFile": "./src/pico-sdk/src/rp2040/hardware_regs/rp2040.svd",
+      "device": "RP2040",
+      "postAttachCommands": [
+        "interrupt",
+        "load",
+//        "continue"
+      ],
+      "preRestartCommands": [
+        "interrupt",
+      ],
+
+      "postRestartCommands": [
+          "load",
+          "continue"
+     ],
+    },
+    {
       "name": "Debug foo on nRF52-dk",
       "cwd": "${workspaceFolder}/projects/adaptabuild-example",
       "executable": "build/foo/nRF52832/foo/foo",

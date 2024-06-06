@@ -9,14 +9,24 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # Create the user
-RUN groupadd --gid $USER_GID $USERNAME && \
-    useradd --uid $USER_UID --gid $USER_GID -d /home/$USERNAME -m -s /usr/bin/bash $USERNAME
+RUN groupadd --gid $USER_GID $USERNAME \
+ && useradd --uid $USER_UID --gid $USER_GID -d /home/$USERNAME -m -s /usr/bin/bash $USERNAME
 
-# [Optional] Add sudo support. Omit if you don't need to install software after connecting.
-RUN apt update && \
-    apt install  --no-install-recommends -y sudo && \
-    echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME && \
-    chmod 0440 /etc/sudoers.d/$USERNAME
+# Add some tolerance to the apt system ...
+# potential solutions:
+# [failed] https://stackoverflow.com/questions/48645936/docker-for-mac-hash-sum-mismatch 
+# [worked] https://stackoverflow.com/questions/67732260/how-to-fix-hash-sum-mismatch-in-docker-on-mac
+ 
+RUN echo "Acquire::http::Pipeline-Depth 0;"  > /etc/apt/apt.conf.d/99custom \
+ && echo "Acquire::http::No-Cache true;" >> /etc/apt/apt.conf.d/99custom \
+ && echo "Acquire::BrokenProxy    true;" >> /etc/apt/apt.conf.d/99custom
+
+# [Optional] Add sudo support. Omit if you don't need to install software after connecting
+
+RUN apt update \
+ && apt install  --no-install-recommends -y sudo \
+ && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+ && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # Add a layer with the correct locale and timezone
 
@@ -29,9 +39,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 # images, see: https://hub.docker.com/_/ubuntu
 
 RUN apt install --no-install-recommends -y \
-                   tzdata \
-                   locales && \
-    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+        tzdata \
+        locales \
+ && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 # Add all of the stuff needed to build an embedded target in a
 # Docker container. Note that the debugger hardware runs on
@@ -43,29 +53,42 @@ RUN apt install --no-install-recommends -y \
 #       sudo apt-cache policy packagename
 #
 #       to get a list of up to date candidates.
+#
+# See this note on how apt pinning works - we want to build containers
+# with very specific versions, but also allow security updates so
+# that a later container build doesn't break because of a patch.
+#
+# https://help.ubuntu.com/community/PinningHowto
+#
+COPY preferences /etc/apt/preferences
 
 RUN apt install --no-install-recommends -y \
-                  git=1:2.34.1-1ubuntu1.9 \
-                  ssh=1:8.9p1-3ubuntu0.6 \
-                  python3=3.10.6-1~22.04 \
-                  build-essential=12.9ubuntu3 \
-                  gcc-arm-none-eabi=15:10.3-2021.07-4 \
-                  gdb-multiarch=12.1-0ubuntu1~22.04 \
-                  binutils-multiarch-dev=2.38-4ubuntu2.6 \
-                  python3-clang=1:14.0-55~exp2 \
-                  python3-pip=22.0.2+dfsg-1ubuntu0.4 \
-                  python3-sphinx=4.3.2-1 \
-                  lcov=1.15-1 \
-                  cpputest=4.0-2 \
-                  graphviz=2.42.2-6 \
-                  vim=2:8.2.3995-1ubuntu2.16 \
-                  bash-completion=1:2.11-5ubuntu1 \
-                  wget=1.21.2-2ubuntu1 && \
-     ln -s /usr/bin/gdb-multiarch /usr/bin/arm-none-eabi-gdb && \
-     ln -s /usr/bin/nm /usr/bin/nm-multiarch && \
-     ln -s /usr/bin/objdump /usr/bin/objdump-multiarch && \
-     wget -P /opt -x -nH --cut-dirs=1 https://github.com/plantuml/plantuml/releases/download/v1.2024.3/plantuml-1.2024.3.jar
+        git \
+        ssh \
+        python3 \
+        build-essential \
+        gcc-arm-none-eabi \
+        picolibc-arm-none-eabi \
+        gdb-multiarch \
+        binutils-multiarch-dev \
+        python3-clang \
+        python3-pip \
+        python3-sphinx \
+        lcov \
+        cpputest \
+        graphviz \
+        vim \
+        bash-completion \
+        wget
 
+RUN ln -s /usr/bin/gdb-multiarch /usr/bin/arm-none-eabi-gdb \
+ && ln -s /usr/bin/nm /usr/bin/nm-multiarch \
+ && ln -s /usr/bin/objdump /usr/bin/objdump-multiarch
+ 
+RUN wget -P /opt -x -nH --cut-dirs=1 https://github.com/plantuml/plantuml/releases/download/v1.2024.3/plantuml-1.2024.3.jar
+
+# Now install all the additional Python packages
+#
 COPY requirements.txt /tmp/requirements.txt
 
 RUN pip3 install -r /tmp/requirements.txt
@@ -78,5 +101,5 @@ RUN pip3 install -r /tmp/requirements.txt
 
 # [Optional] Set the default user - omit if you want to keep
 # the default as root. (You don't)
-
+#
 USER $USERNAME

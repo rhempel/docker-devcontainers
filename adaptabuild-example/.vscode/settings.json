@@ -1,8 +1,13 @@
 {
     "cortex-debug.variableUseNaturalFormat": false,
     "files.associations": {
+        "*.rst": "raw",
         "system_error": "c",
         "csloopdevice.pb.h": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "pads_bank0.h": "c",
+        "pico.h": "c",
+        "atomic": "c",
+        "cstdint": "c"
     }
 }
