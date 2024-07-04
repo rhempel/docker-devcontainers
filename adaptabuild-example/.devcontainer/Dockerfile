@@ -60,7 +60,7 @@ RUN apt install --no-install-recommends -y \
 #
 # https://help.ubuntu.com/community/PinningHowto
 #
-COPY preferences /etc/apt/preferences
+COPY apt.preferences /etc/apt/preferences
 
 RUN apt install --no-install-recommends -y \
         git \

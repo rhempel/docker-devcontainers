@@ -1,0 +1,15 @@
+# Ignore the VSCode generated directories
+#
+.cache
+.dotnet
+.local
+.ssh
+.vscode-server
+.devcontainer/.*Marker
+
+# Ignore the session generated files
+.bash_history
+.viminfo
+
+# Ignore Python history files
+**/.python_history

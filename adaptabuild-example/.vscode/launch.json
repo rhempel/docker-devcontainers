@@ -32,6 +32,22 @@
 //    "showDevDebugOutput": "raw",
     },
     {
+      "name": "Debug foo on STM32G0",
+      "cwd": "${workspaceFolder}/projects/adaptabuild-example",
+      "executable": "build/foo/STM32G031xx/foo/foo",
+      "request": "launch",
+      "type": "cortex-debug",
+      "runToEntryPoint": "main",
+      "servertype": "external",
+      "gdbTarget": "host.gdb.gateway:3333",
+      "gdbPath": "/usr/bin/gdb-multiarch",
+      "postAttachCommands": [
+        "monitor halt",
+//        "load",
+//        "continue"
+      ],
+      "showDevDebugOutput": "raw",
+    },    {
       // Uses https://github.com/majbthrd/pico-debug/releases !!! :-)
       // https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#what-is-on-your-pico
       // https://github.com/carlosftm/RPi-Pico-Baremetal
