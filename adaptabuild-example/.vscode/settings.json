@@ -1,0 +1,19 @@
+{
+  "artificialDelayMilliseconds": 250,
+  "keepExistingTerminalsOpen": false,
+  "runOnStartup": true,
+  "restoreTerminals.terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "foo",
+          "commands": ["cd projects/adaptabuild-example",]
+        },
+        {
+          "name": "bar",
+          "commands": ["cd projects",]
+        },
+      ]
+    },
+  ],
+}

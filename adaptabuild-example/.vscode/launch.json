@@ -39,15 +39,18 @@
       "type": "cortex-debug",
       "runToEntryPoint": "main",
       "servertype": "external",
-      "gdbTarget": "host.gdb.gateway:3333",
+      "liveWatch": {
+        "enabled": true,
+        "samplesPerSecond": 4
+      },
+      "gdbTarget": "host.gdb.gateway:4242",
       "gdbPath": "/usr/bin/gdb-multiarch",
-      "postAttachCommands": [
-        "monitor halt",
-//        "load",
-//        "continue"
-      ],
-      "showDevDebugOutput": "raw",
-    },    {
+      "svdPath": "${workspaceFolder}/projects/adaptabuild-example/src/third_party/stm32-svd/g0/STM32G031.svd",
+//      "showDevDebugOutput": "raw",
+    },
+    
+    {
+
       // Uses https://github.com/majbthrd/pico-debug/releases !!! :-)
       // https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#what-is-on-your-pico
       // https://github.com/carlosftm/RPi-Pico-Baremetal
@@ -69,11 +72,11 @@
 //      "showDevDebugOutput": "raw",
       "svdFile": "./src/pico-sdk/src/rp2040/hardware_regs/rp2040.svd",
       "device": "RP2040",
-      "postAttachCommands": [
-        "interrupt",
-        "load",
+//      "postAttachCommands": [
+//        "interrupt",
+//        "load",
 //        "continue"
-      ],
+//      ],
       "preRestartCommands": [
         "interrupt",
       ],

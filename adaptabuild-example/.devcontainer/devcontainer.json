@@ -19,21 +19,24 @@
   "customizations": {
     "vscode": {
       "extensions": [
-		"ms-vscode.cpptools",
-		"mcu-debug.debug-tracker-vscode",
-		"mcu-debug.memory-view",
-		"mcu-debug.rtos-views",
-		"mcu-debug.peripheral-viewer",
-		"ms-vscode.live-server",
-		"marus25.cortex-debug",
-		"marus25.cortex-debug-dp-stm32f1",
-		"marus25.cortex-debug-dp-stm32f4",
-		"jeandudey.cortex-debug-dp-stm32h7",
-		"marus25.cortex-debug-dp-stm32l4",
-		"ms-vscode.cpptools-extension-pack",
-		"ms-azuretools.vscode-docker",
-		"ms-vscode.makefile-tools"
-	],
+        "ms-vscode.cpptools",
+        "mcu-debug.debug-tracker-vscode",
+        "mcu-debug.memory-view",
+        "mcu-debug.rtos-views",
+        "mcu-debug.peripheral-viewer",
+        "ms-vscode.live-server",
+        "marus25.cortex-debug",
+        "marus25.cortex-debug-dp-stm32f1",
+        "marus25.cortex-debug-dp-stm32f4",
+        "jeandudey.cortex-debug-dp-stm32h7",
+        "marus25.cortex-debug-dp-stm32l4",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.makefile-tools",
+        "EthanSK.restore-terminals",
+        "yzhang.markdown-all-in-one",
+        "eclipse-cdt.peripheral-inspector"
+      ],
     },
   },
 
@@ -47,6 +50,11 @@
   // a container crash, use a volume to hold persistent data under the default
   // user's ~/projects directory
   //
+  // NOTE: You can access this data directly from Windows at this URL:
+  //
+  // \\wsl.localhost\docker-desktop-data\data\docker\volumes\lcra-test-volume\_data
+
+  //
   // For improved security, we mount your host user's .ssh folder in the
   // container under the default user's .ssh directory
 
@@ -54,4 +62,15 @@
     "source=adaptabuild-volume,target=/home/adaptabuild/projects,type=volume,consistency=cached",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/adaptabuild/.ssh,type=bind,consistency=cached",
   ],
+
+    // Change the ownership for the volume mount point from root to the default user
+
+  "postCreateCommand":
+    "sudo chown adaptabuild /home/adaptabuild/projects",
+
+  "postStartCommand":
+    "git -C /home/adaptabuild/projects/adaptabuild-example fetch || git clone https://github.com/rhempel/adaptabuild-example.git /home/adaptabuild/projects/adaptabuild-example",
+
+    // NOTE: Add any .cache or .local directories under the user to the volume for improved performance
+
 }
