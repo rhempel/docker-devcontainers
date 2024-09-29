@@ -53,7 +53,7 @@
         "ms-vscode.makefile-tools",
         "EthanSK.restore-terminals",
         "yzhang.markdown-all-in-one",
-        "eclipse-cdt.peripheral-inspector"
+        "eclipse-cdt.peripheral-inspector",
       ],
     },
   },

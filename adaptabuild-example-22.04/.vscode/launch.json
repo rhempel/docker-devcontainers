@@ -1,3 +1,26 @@
+// THESE ARE THE COMMAND OVERRIDES FOR THE BLACKMAGIC DEBUG APP
+// - it works fairly well for STM32 devices but it's not working
+//   at all with RPi pico or NRF devices, so we are sticking with
+//   OpenOCD for now
+//
+// "overrideLaunchCommands": [
+//   "interrupt",
+//   "monitor halt_timeout 2000",
+//   "monitor s",
+//   "monitor s",
+//   "attach 1",
+//   "load",
+// ],
+// "overrideResetCommands": [
+//   "interrupt",
+//   "set $pc=&Reset_Handler",
+// ],
+// "overrideRestartCommands": [
+//   "interrupt",
+//   "load",
+// ],
+//
+
 {
   // Use IntelliSense to learn about possible attributes.
   // Hover to view descriptions of existing attributes.
@@ -6,41 +29,96 @@
 
   "configurations": [
     {
-      "name": "Debug nanopb-poc on STM32H7",
-      "cwd": "${workspaceFolder}/projects/adaptabuild-example",
-      "executable": "build/nanopb_poc/STM32H7A3ZI/nanopb_poc/nanopb_poc",
+      "name": "Debug foo on STM32H7",
+      "cwd": "${userHome}/projects/adaptabuild-example",
+      "executable": "build/foo/STM32H7A3ZI/foo/foo.elf",
+      "request": "launch",
+      "type": "cortex-debug",
+      "runToEntryPoint": "main",
+      "servertype": "external",
+      "gdbTarget": "host.gdb.gateway:2000",
+      "gdbPath": "/usr/bin/gdb-multiarch",
+      //    "showDevDebugOutput": "raw",
+      "overrideLaunchCommands": [
+        "interrupt",
+        "set $pc=&g_pfnVectors",
+      ],
+      "overrideResetCommands": [
+        "set $pc=&g_pfnVectors",
+      ],
+      "overrideRestartCommands": [
+        "interrupt",
+        "set $pc=&g_pfnVectors",
+      ],
+    },
+    {
+      "name": "Debug foo on STM32F0",
+      "cwd": "${userHome}/projects/adaptabuild-example",
+      "executable": "build/foo/STM32F051R8/foo/foo.elf",
       "request": "launch",
       "type": "cortex-debug",
       "runToEntryPoint": "main",
       "servertype": "external",
       "gdbTarget": "host.gdb.gateway:3333",
       "gdbPath": "/usr/bin/gdb-multiarch",
-    },
-    {
-      "name": "Debug foo on STM32F0",
-      "cwd": "${workspaceFolder}/projects/adaptabuild-example",
-      "executable": "build/foo/STM32F051R8/foo/foo.elf",
-      "request": "launch",
-      "type": "cortex-debug",
-      "runToEntryPoint": "main",
-      "servertype": "external",
-      "gdbTarget": "host.gdb.gateway:4242",
-      "gdbPath": "/usr/bin/gdb-multiarch",
+//    "showDevDebugOutput": "raw",
+      "overrideLaunchCommands": [
+        "interrupt",
+        "set $pc=&g_pfnVectors",
+      ],
+      "overrideResetCommands": [
+        "set $pc=&g_pfnVectors",
+      ],
+      "overrideRestartCommands": [
+        "interrupt",
+        "set $pc=&g_pfnVectors",
+      ],
     },
     {
       "name": "Debug foo on STM32G0",
-      "cwd": "${workspaceFolder}/projects/adaptabuild-example",
+      "cwd": "${userHome}/projects/adaptabuild-example",
       "executable": "build/foo/STM32G031xx/foo/foo.elf",
       "request": "launch",
       "type": "cortex-debug",
       "runToEntryPoint": "main",
       "servertype": "external",
-      "gdbTarget": "host.gdb.gateway:4242",
+      "gdbTarget": "host.gdb.gateway:3333",
       "gdbPath": "/usr/bin/gdb-multiarch",
+//      "showDevDebugOutput": "raw",
+      "overrideLaunchCommands": [
+          "interrupt",
+          "set $pc=&g_pfnVectors",
+      ],
+      "overrideResetCommands": [
+          "set $pc=&g_pfnVectors",
+      ],
+      "overrideRestartCommands": [
+          "interrupt",
+          "set $pc=&g_pfnVectors",
+      ],
     },
-    
     {
+      "name": "Debug foo on nRF52-dk",
+      "cwd": "${userHome}/projects/adaptabuild-example",
+      "executable": "build/foo/nRF52832/foo/foo.elf",
+      "request": "launch",
+      "type": "cortex-debug",
+      "runToEntryPoint": "main",
+      "servertype": "external",
+      "gdbTarget": "host.gdb.gateway:2331", // NOTE: This is a J-Link, not OpenOCD!!
+      "gdbPath": "/usr/bin/gdb-multiarch",
+      "showDevDebugOutput": "raw",
 
+      "overrideResetCommands": [
+        "interrupt",
+        "set $pc=&Reset_Handler",
+      ],
+      "overrideRestartCommands": [
+        "interrupt",
+        "load",
+      ],
+    },
+    {
       // Uses https://github.com/majbthrd/pico-debug/releases !!! :-)
       // https://www.raspberrypi.com/documentation/microcontrollers/raspberry-pi-pico.html#what-is-on-your-pico
       // https://github.com/carlosftm/RPi-Pico-Baremetal
@@ -48,38 +126,30 @@
       // https://github.com/dwelch67/raspberrypi-pico/blob/main/README.txt
       // https://gitlab.com/khockuba/cmsis-pi-pico
       // https://github.com/cinnamondev/cmsis-rp2040
+
       "numberOfProcessors": 2,
       "targetProcessor": 1,
       "name": "Debug foo on pico2040",
-      "cwd": "${workspaceFolder}/projects/adaptabuild-example",
-      "executable": "build/foo/pico2040/foo/foo",
+      "cwd": "${userHome}/projects/adaptabuild-example",
+      "executable": "build/foo/pico2040/foo/foo.elf",
       "request": "launch",
       "type": "cortex-debug",
       "runToEntryPoint": "main",
       "servertype": "external",
       "gdbTarget": "host.gdb.gateway:3333",
       "gdbPath": "/usr/bin/gdb-multiarch",
-      "svdFile": "./src/pico-sdk/src/rp2040/hardware_regs/rp2040.svd",
+      "svdFile": "./src/third-party/pico-sdk/src/rp2040/hardware_regs/rp2040.svd",
       "device": "RP2040",
-      "preRestartCommands": [
-        "interrupt",
-      ],
-
-      "postRestartCommands": [
+//    "showDevDebugOutput": "raw",
+      "overrideLaunchCommands": [
           "load",
-          "continue"
-     ],
-    },
-    {
-      "name": "Debug foo on nRF52-dk",
-      "cwd": "${workspaceFolder}/projects/adaptabuild-example",
-      "executable": "build/foo/nRF52832/foo/foo",
-      "request": "launch",
-      "type": "cortex-debug",
-      "runToEntryPoint": "main",
-      "servertype": "external",
-      "gdbTarget": "host.gdb.gateway:2331",
-      "gdbPath": "/usr/bin/gdb-multiarch",
+      ],
+      "overrideResetCommands": [
+        "set $pc=&_entry_point",
+      ],
+      "overrideRestartCommands": [
+        "load",
+      ],
     },
   ],
 }

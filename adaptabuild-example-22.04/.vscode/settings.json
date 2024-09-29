@@ -18,4 +18,5 @@
   ],
   "task.autoDetect": "off",
   "task.allowAutomaticTasks": "off",
+  "cortex-debug.variableUseNaturalFormat": false,
 }
